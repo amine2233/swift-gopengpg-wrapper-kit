@@ -1,3 +1,12 @@
+# [1.0.1](https://github.com/amine2233/swift-gopengpg-wrapper-kit/compare/1.0.0...1.0.1) (2026-10-08)
+
+
+## Bug Fixes
+
+
+* lower minimum deployment targets to iOS 15 and macOS 13 ([90427c3](https://github.com/amine2233/swift-gopengpg-wrapper-kit/commit/90427c33cbcb6615ec73e6b15620c7c348b71a2e))
+
+
 # 1.0.0 (2026-10-08)
 
 
