@@ -28,9 +28,13 @@ struct FileEncryptionFunctionalTests {
 
         let onDisk = try Data(contentsOf: encryptedFile)
         #expect(onDisk.first.map { $0 & 0x80 != 0 } == true)
-        #expect(onDisk != (try Data(contentsOf: source)))
+        #expect(try onDisk != Data(contentsOf: source))
 
-        let decrypted = try await pgp.cipher.decrypt(onDisk, using: pair.privateKey, passphrase: Fixture.passphrase)
+        let decrypted = try await pgp.cipher.decrypt(
+            onDisk,
+            using: pair.privateKey,
+            passphrase: Fixture.passphrase
+        )
         let restored = workspace.file("report.restored.txt")
         try decrypted.write(to: restored)
 
@@ -77,7 +81,11 @@ struct FileEncryptionFunctionalTests {
         let publicKey = try await freshSDK.keys.importPublicKey(from: Data(contentsOf: publicFile))
         let privateKey = try await freshSDK.keys.importPrivateKey(from: Data(contentsOf: privateFile))
         let encrypted = try await freshSDK.cipher.encrypt(Data("round trip".utf8), to: [publicKey])
-        let decrypted = try await freshSDK.cipher.decrypt(encrypted, using: privateKey, passphrase: Fixture.passphrase)
+        let decrypted = try await freshSDK.cipher.decrypt(
+            encrypted,
+            using: privateKey,
+            passphrase: Fixture.passphrase
+        )
 
         #expect(publicKey.fingerprint == pair.publicKey.fingerprint)
         #expect(privateKey.fingerprint == pair.privateKey.fingerprint)
@@ -115,15 +123,28 @@ struct FileEncryptionFunctionalTests {
             passphrase: PGPPassphrase("carol secret")
         )
         let file = workspace.file("shared.gpg")
-        try await pgp.cipher.encrypt(Data("team secret".utf8), to: [alice.publicKey, bob.publicKey]).write(to: file)
+        try await pgp.cipher.encrypt(Data("team secret".utf8), to: [alice.publicKey, bob.publicKey])
+            .write(to: file)
         let ciphertext = try Data(contentsOf: file)
 
-        #expect(try await pgp.cipher.decrypt(ciphertext, using: alice.privateKey, passphrase: Fixture.passphrase)
+        #expect(try await pgp.cipher.decrypt(
+            ciphertext,
+            using: alice.privateKey,
+            passphrase: Fixture.passphrase
+        )
             == Data("team secret".utf8))
-        #expect(try await pgp.cipher.decrypt(ciphertext, using: bob.privateKey, passphrase: PGPPassphrase("bob secret"))
+        #expect(try await pgp.cipher.decrypt(
+            ciphertext,
+            using: bob.privateKey,
+            passphrase: PGPPassphrase("bob secret")
+        )
             == Data("team secret".utf8))
         await #expect(throws: PGPError.self) {
-            try await pgp.cipher.decrypt(ciphertext, using: carol.privateKey, passphrase: PGPPassphrase("carol secret"))
+            try await pgp.cipher.decrypt(
+                ciphertext,
+                using: carol.privateKey,
+                passphrase: PGPPassphrase("carol secret")
+            )
         }
     }
 
@@ -143,7 +164,7 @@ struct FileEncryptionFunctionalTests {
             passphrase: Fixture.passphrase
         )
 
-        #expect(decrypted == (try Data(contentsOf: source)))
+        #expect(try decrypted == Data(contentsOf: source))
     }
 
     @Test
@@ -151,7 +172,11 @@ struct FileEncryptionFunctionalTests {
         let pair = try await makeKeyPair()
 
         let encrypted = try await pgp.cipher.encrypt(Data(), to: [pair.publicKey])
-        let decrypted = try await pgp.cipher.decrypt(encrypted, using: pair.privateKey, passphrase: Fixture.passphrase)
+        let decrypted = try await pgp.cipher.decrypt(
+            encrypted,
+            using: pair.privateKey,
+            passphrase: Fixture.passphrase
+        )
 
         #expect(decrypted.isEmpty)
     }
@@ -188,8 +213,12 @@ struct FileEncryptionFunctionalTests {
         let document = workspace.file("contract.txt")
         let signatureFile = workspace.file("contract.txt.sig")
         try Data("pay 100".utf8).write(to: document)
-        try await pgp.signer.sign(Data(contentsOf: document), using: pair.privateKey, passphrase: Fixture.passphrase)
-            .write(to: signatureFile)
+        try await pgp.signer.sign(
+            Data(contentsOf: document),
+            using: pair.privateKey,
+            passphrase: Fixture.passphrase
+        )
+        .write(to: signatureFile)
 
         try await pgp.signer.verify(
             Data(contentsOf: document),
@@ -213,7 +242,11 @@ struct FileEncryptionFunctionalTests {
         defer { workspace.remove() }
         let pair = try await makeKeyPair()
         let data = Data("signed text".utf8)
-        let signature = try await pgp.signer.sign(data, using: pair.privateKey, passphrase: Fixture.passphrase)
+        let signature = try await pgp.signer.sign(
+            data,
+            using: pair.privateKey,
+            passphrase: Fixture.passphrase
+        )
         let armored = try await pgp.armorer.armor(signature, as: .signature)
         let ascFile = workspace.file("data.sig.asc")
         try armored.write(to: ascFile, atomically: true, encoding: .utf8)
@@ -233,7 +266,11 @@ struct FileEncryptionFunctionalTests {
             passphrase: PGPPassphrase("mallory")
         )
         let data = Data("hello".utf8)
-        let signature = try await pgp.signer.sign(data, using: signer.privateKey, passphrase: Fixture.passphrase)
+        let signature = try await pgp.signer.sign(
+            data,
+            using: signer.privateKey,
+            passphrase: Fixture.passphrase
+        )
 
         await #expect(throws: PGPError.signatureInvalid) {
             try await pgp.signer.verify(data, signature: signature, with: stranger.publicKey)

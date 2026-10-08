@@ -79,7 +79,7 @@ struct GnuPGInteroperabilityTests {
             "--trust-model", "always",
             "--recipient", pair.publicKey.fingerprint,
             "--output", encryptedFile.path,
-            "--encrypt", source.path,
+            "--encrypt", source.path
         ])
         #expect(result.status == 0, "\(result.errorOutput)")
 
@@ -107,7 +107,7 @@ struct GnuPGInteroperabilityTests {
             "--armor",
             "--recipient", pair.publicKey.fingerprint,
             "--output", armoredFile.path,
-            "--encrypt", source.path,
+            "--encrypt", source.path
         ])
         #expect(result.status == 0, "\(result.errorOutput)")
 
@@ -127,7 +127,7 @@ struct GnuPGInteroperabilityTests {
         let gpg = try GPGHome()
         defer { workspace.remove(); gpg.shutdown() }
         let generated = try gpg.runWithPassphrase(Fixture.passphrase, [
-            "--quick-generate-key", "GPG User <gpg.user@example.com>", "default", "default", "never",
+            "--quick-generate-key", "GPG User <gpg.user@example.com>", "default", "default", "never"
         ])
         #expect(generated.status == 0, "\(generated.errorOutput)")
         let publicExport = try gpg.run(["--armor", "--export", "gpg.user@example.com"])
@@ -161,8 +161,12 @@ struct GnuPGInteroperabilityTests {
         let document = workspace.file("doc.txt")
         let signatureFile = workspace.file("doc.txt.sig")
         try Data("signed by the sdk".utf8).write(to: document)
-        try await pgp.signer.sign(Data(contentsOf: document), using: pair.privateKey, passphrase: Fixture.passphrase)
-            .write(to: signatureFile)
+        try await pgp.signer.sign(
+            Data(contentsOf: document),
+            using: pair.privateKey,
+            passphrase: Fixture.passphrase
+        )
+        .write(to: signatureFile)
 
         let valid = try gpg.run(["--verify", signatureFile.path, document.path])
         try Data("tampered".utf8).write(to: document)
@@ -184,7 +188,7 @@ struct GnuPGInteroperabilityTests {
         try Data("signed by gpg".utf8).write(to: document)
 
         let result = try gpg.runWithPassphrase(Fixture.passphrase, [
-            "--detach-sign", "--output", signatureFile.path, document.path,
+            "--detach-sign", "--output", signatureFile.path, document.path
         ])
         #expect(result.status == 0, "\(result.errorOutput)")
 

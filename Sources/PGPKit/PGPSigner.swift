@@ -8,7 +8,8 @@ public protocol PGPSigner: Sendable {
     ///   - privateKey: The signing key.
     ///   - passphrase: The passphrase protecting `privateKey`.
     /// - Returns: The binary detached signature.
-    /// - Throws: ``PGPError/invalidPassphrase`` for a wrong passphrase, ``PGPError/invalidKey`` for an unusable key.
+    /// - Throws: ``PGPError/invalidPassphrase`` for a wrong passphrase, ``PGPError/invalidKey`` for an
+    /// unusable key.
     func sign(
         _ data: Data,
         using privateKey: PGPPrivateKey,

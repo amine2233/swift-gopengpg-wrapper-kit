@@ -1,7 +1,8 @@
 import Foundation
 import PGPKit
 
-/// A ``PGPKeyManager`` whose every operation is a replaceable closure. Unset operations throw ``PGPError/invalidInput``.
+/// A ``PGPKeyManager`` whose every operation is a replaceable closure. Unset operations throw
+/// ``PGPError/invalidInput``.
 public struct PGPKeyManagerFake: PGPKeyManager {
     /// Behavior of ``generateKeyPair(for:algorithm:passphrase:)``.
     public var onGenerateKeyPair: @Sendable (PGPIdentity, PGPKeyAlgorithm, PGPPassphrase) async throws
@@ -79,7 +80,8 @@ public struct PGPKeyManagerFake: PGPKeyManager {
     }
 }
 
-/// A ``PGPCipher`` whose every operation is a replaceable closure. Unset operations throw ``PGPError/invalidInput``.
+/// A ``PGPCipher`` whose every operation is a replaceable closure. Unset operations throw
+/// ``PGPError/invalidInput``.
 public struct PGPCipherFake: PGPCipher {
     /// Behavior of ``encrypt(_:to:)``.
     public var onEncrypt: @Sendable (Data, [PGPPublicKey]) async throws -> Data
@@ -158,7 +160,8 @@ public struct PGPSignerFake: PGPSigner {
     }
 }
 
-/// A ``PGPArmorer`` whose every operation is a replaceable closure. Unset operations throw ``PGPError/invalidInput``.
+/// A ``PGPArmorer`` whose every operation is a replaceable closure. Unset operations throw
+/// ``PGPError/invalidInput``.
 public struct PGPArmorerFake: PGPArmorer {
     /// Behavior of ``armor(_:as:)``.
     public var onArmor: @Sendable (Data, PGPArmorType) async throws -> String

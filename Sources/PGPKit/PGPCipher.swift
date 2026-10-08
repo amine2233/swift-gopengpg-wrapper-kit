@@ -7,7 +7,8 @@ public protocol PGPCipher: Sendable {
     ///   - plaintext: The data to encrypt.
     ///   - recipients: The public keys allowed to decrypt. Must not be empty.
     /// - Returns: The binary encrypted message.
-    /// - Throws: ``PGPError/invalidInput`` when `recipients` is empty, ``PGPError/invalidKey`` for an unusable key.
+    /// - Throws: ``PGPError/invalidInput`` when `recipients` is empty, ``PGPError/invalidKey`` for an
+    /// unusable key.
     func encrypt(_ plaintext: Data, to recipients: [PGPPublicKey]) async throws -> Data
 
     /// Decrypts a binary or ASCII-armored message.

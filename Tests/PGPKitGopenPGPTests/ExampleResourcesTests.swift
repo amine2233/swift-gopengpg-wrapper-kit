@@ -8,16 +8,21 @@ struct ExampleResourcesTests {
 
     private func aliceKeys() async throws -> (publicKey: PGPPublicKey, privateKey: PGPPrivateKey) {
         let publicKey = try await pgp.keys.importPublicKey(from: ExampleResources.bundled("alice.public.asc"))
-        let privateKey = try await pgp.keys.importPrivateKey(from: ExampleResources.bundled("alice.private.asc"))
+        let privateKey = try await pgp.keys
+            .importPrivateKey(from: ExampleResources.bundled("alice.private.asc"))
         return (publicKey, privateKey)
     }
 
     @Test
     func armoredAndBinaryKeyFilesDescribeTheSameKey() async throws {
-        let armoredPublic = try await pgp.keys.importPublicKey(from: ExampleResources.bundled("alice.public.asc"))
-        let binaryPublic = try await pgp.keys.importPublicKey(from: ExampleResources.bundled("alice.public.gpg"))
-        let armoredPrivate = try await pgp.keys.importPrivateKey(from: ExampleResources.bundled("alice.private.asc"))
-        let binaryPrivate = try await pgp.keys.importPrivateKey(from: ExampleResources.bundled("alice.private.gpg"))
+        let armoredPublic = try await pgp.keys
+            .importPublicKey(from: ExampleResources.bundled("alice.public.asc"))
+        let binaryPublic = try await pgp.keys
+            .importPublicKey(from: ExampleResources.bundled("alice.public.gpg"))
+        let armoredPrivate = try await pgp.keys
+            .importPrivateKey(from: ExampleResources.bundled("alice.private.asc"))
+        let binaryPrivate = try await pgp.keys
+            .importPrivateKey(from: ExampleResources.bundled("alice.private.gpg"))
 
         #expect(armoredPublic.fingerprint == binaryPublic.fingerprint)
         #expect(armoredPrivate.fingerprint == binaryPrivate.fingerprint)
@@ -34,8 +39,8 @@ struct ExampleResourcesTests {
             passphrase: Fixture.passphrase
         )
 
-        #expect(decrypted == (try ExampleResources.bundled("message.txt")))
-        #expect(decrypted == (try ExampleResources.bundled("message.decrypted.txt")))
+        #expect(try decrypted == (ExampleResources.bundled("message.txt")))
+        #expect(try decrypted == (ExampleResources.bundled("message.decrypted.txt")))
     }
 
     @Test
@@ -50,7 +55,7 @@ struct ExampleResourcesTests {
         )
 
         #expect(armored.hasPrefix("-----BEGIN PGP MESSAGE-----"))
-        #expect(decrypted == (try ExampleResources.bundled("message.txt")))
+        #expect(try decrypted == (ExampleResources.bundled("message.txt")))
     }
 
     @Test
@@ -71,8 +76,16 @@ struct ExampleResourcesTests {
         let keys = try await aliceKeys()
         let message = try ExampleResources.bundled("message.txt")
 
-        try await pgp.signer.verify(message, signature: ExampleResources.bundled("message.txt.sig"), with: keys.publicKey)
-        try await pgp.signer.verify(message, signature: ExampleResources.bundled("message.txt.sig.asc"), with: keys.publicKey)
+        try await pgp.signer.verify(
+            message,
+            signature: ExampleResources.bundled("message.txt.sig"),
+            with: keys.publicKey
+        )
+        try await pgp.signer.verify(
+            message,
+            signature: ExampleResources.bundled("message.txt.sig.asc"),
+            with: keys.publicKey
+        )
     }
 
     @Test
@@ -98,7 +111,7 @@ struct ExampleResourcesTests {
             passphrase: Fixture.passphrase
         )
 
-        #expect(decrypted == (try ExampleResources.bundled("gnupg-plain.txt")))
+        #expect(try decrypted == (ExampleResources.bundled("gnupg-plain.txt")))
     }
 
     @Test
@@ -111,6 +124,6 @@ struct ExampleResourcesTests {
             passphrase: Fixture.passphrase
         )
 
-        #expect(decrypted == (try ExampleResources.bundled("sdk-to-bob.decrypted.txt")))
+        #expect(try decrypted == (ExampleResources.bundled("sdk-to-bob.decrypted.txt")))
     }
 }

@@ -20,6 +20,6 @@ enum ExampleResources {
     }
 
     static func bundledText(_ name: String) throws -> String {
-        String(decoding: try bundled(name), as: UTF8.self)
+        try String(decoding: bundled(name), as: UTF8.self)
     }
 }

@@ -3,7 +3,10 @@ import PGPKit
 import PGPKitGopenPGP
 import Testing
 
-@Suite(.serialized, .enabled(if: ExampleResources.isGenerationEnabled, "set PGPKIT_GENERATE_EXAMPLES=1 to regenerate"))
+@Suite(
+    .serialized,
+    .enabled(if: ExampleResources.isGenerationEnabled, "set PGPKIT_GENERATE_EXAMPLES=1 to regenerate")
+)
 struct ExampleResourcesGenerator {
     private let pgp = PGP.gopenPGP()
     private let directory = ExampleResources.sourceDirectory
@@ -24,8 +27,8 @@ struct ExampleResourcesGenerator {
             algorithm: .curve25519,
             passphrase: Fixture.passphrase
         )
-        try write(await pgp.armorer.armor(pair.publicKey.data, as: .publicKey), "alice.public.asc")
-        try write(await pgp.armorer.armor(pair.privateKey.data, as: .privateKey), "alice.private.asc")
+        try await write(pgp.armorer.armor(pair.publicKey.data, as: .publicKey), "alice.public.asc")
+        try await write(pgp.armorer.armor(pair.privateKey.data, as: .privateKey), "alice.private.asc")
         try write(pair.publicKey.data, "alice.public.gpg")
         try write(pair.privateKey.data, "alice.private.gpg")
 
@@ -41,14 +44,22 @@ struct ExampleResourcesGenerator {
         let plaintext = Data(message.utf8)
         let encrypted = try await pgp.cipher.encrypt(plaintext, to: [pair.publicKey])
         try write(encrypted, "message.txt.gpg")
-        try write(await pgp.armorer.armor(encrypted, as: .message), "message.txt.asc")
+        try await write(pgp.armorer.armor(encrypted, as: .message), "message.txt.asc")
 
-        let decrypted = try await pgp.cipher.decrypt(encrypted, using: pair.privateKey, passphrase: Fixture.passphrase)
+        let decrypted = try await pgp.cipher.decrypt(
+            encrypted,
+            using: pair.privateKey,
+            passphrase: Fixture.passphrase
+        )
         try write(decrypted, "message.decrypted.txt")
 
-        let signature = try await pgp.signer.sign(plaintext, using: pair.privateKey, passphrase: Fixture.passphrase)
+        let signature = try await pgp.signer.sign(
+            plaintext,
+            using: pair.privateKey,
+            passphrase: Fixture.passphrase
+        )
         try write(signature, "message.txt.sig")
-        try write(await pgp.armorer.armor(signature, as: .signature), "message.txt.sig.asc")
+        try await write(pgp.armorer.armor(signature, as: .signature), "message.txt.sig.asc")
 
         #expect(decrypted == plaintext)
     }
@@ -59,18 +70,25 @@ struct ExampleResourcesGenerator {
         defer { gpg.shutdown() }
         let email = "bob@example.com"
         let generated = try gpg.runWithPassphrase(Fixture.passphrase, [
-            "--quick-generate-key", "Bob GnuPG <\(email)>", "default", "default", "never",
+            "--quick-generate-key", "Bob GnuPG <\(email)>", "default", "default", "never"
         ])
         #expect(generated.status == 0, "\(generated.errorOutput)")
         let publicExport = try gpg.run(["--armor", "--export", email])
-        let secretExport = try gpg.runWithPassphrase(Fixture.passphrase, ["--armor", "--export-secret-keys", email])
+        let secretExport = try gpg.runWithPassphrase(
+            Fixture.passphrase,
+            ["--armor", "--export-secret-keys", email]
+        )
         try write(publicExport.output, "bob.public.asc")
         try write(secretExport.output, "bob.private.asc")
 
-        let gpgPlain = workspaceFile("gnupg-plain.txt", contents: "Written and encrypted by the gpg command line.\n")
+        let gpgPlain = workspaceFile(
+            "gnupg-plain.txt",
+            contents: "Written and encrypted by the gpg command line.\n"
+        )
         let gpgEncrypted = directory.appendingPathComponent("gnupg-encrypted.txt.gpg")
         let encrypt = try gpg.run([
-            "--trust-model", "always", "--recipient", email, "--output", gpgEncrypted.path, "--encrypt", gpgPlain.path,
+            "--trust-model", "always", "--recipient", email, "--output", gpgEncrypted.path, "--encrypt",
+            gpgPlain.path
         ])
         #expect(encrypt.status == 0, "\(encrypt.errorOutput)")
 

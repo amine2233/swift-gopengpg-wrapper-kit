@@ -6,7 +6,7 @@ struct Workspace {
     let url: URL
 
     init(base: URL = FileManager.default.temporaryDirectory) throws {
-        url = base.appendingPathComponent("pgpkit-\(UUID().uuidString.prefix(8))")
+        self.url = base.appendingPathComponent("pgpkit-\(UUID().uuidString.prefix(8))")
         try FileManager.default.createDirectory(
             at: url,
             withIntermediateDirectories: true,
@@ -47,7 +47,7 @@ struct GPGHome {
     static let executable: URL? = [
         "/opt/homebrew/bin/gpg",
         "/usr/local/bin/gpg",
-        "/usr/local/MacGPG2/bin/gpg",
+        "/usr/local/MacGPG2/bin/gpg"
     ]
     .map { URL(fileURLWithPath: $0) }
     .first { FileManager.default.isExecutableFile(atPath: $0.path) }
@@ -55,7 +55,7 @@ struct GPGHome {
     let url: URL
 
     init() throws {
-        url = try Workspace(base: URL(fileURLWithPath: "/tmp")).url
+        self.url = try Workspace(base: URL(fileURLWithPath: "/tmp")).url
     }
 
     @discardableResult
@@ -79,7 +79,12 @@ struct GPGHome {
     }
 
     func runWithPassphrase(_ passphrase: PGPPassphrase, _ arguments: [String]) throws -> GPGResult {
-        try run(["--pinentry-mode", "loopback", "--passphrase", String(decoding: passphrase.data, as: UTF8.self)] + arguments)
+        try run([
+            "--pinentry-mode",
+            "loopback",
+            "--passphrase",
+            String(decoding: passphrase.data, as: UTF8.self)
+        ] + arguments)
     }
 
     func shutdown() {

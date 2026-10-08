@@ -8,7 +8,8 @@ public protocol PGPKeyManager: Sendable {
     ///   - algorithm: The key algorithm. RSA keys below 3072 bits are rejected.
     ///   - passphrase: The passphrase that locks the private key.
     /// - Returns: The generated key pair.
-    /// - Throws: ``PGPError/invalidInput`` for an unsupported size, ``PGPError/keyGenerationFailed`` on engine failure.
+    /// - Throws: ``PGPError/invalidInput`` for an unsupported size, ``PGPError/keyGenerationFailed`` on
+    /// engine failure.
     func generateKeyPair(
         for identity: PGPIdentity,
         algorithm: PGPKeyAlgorithm,
