@@ -26,6 +26,16 @@ Real OpenPGP keys and files produced by the tests, kept so you can open them and
 | `sdk-to-bob.txt.gpg` | A message encrypted by PGPKit for Bob |
 | `sdk-to-bob.decrypted.txt` | That message decrypted by `gpg` |
 
+## Pass store entry - GnuPG OCB AEAD (tag 20)
+
+Reproduces a password-store entry written by GnuPG for a key that advertises `AEAD: OCB`, a format many OpenPGP libraries cannot read.
+
+| File | What it is |
+|---|---|
+| `pass-store.public.asc` / `pass-store.private.asc` | RSA-4096 key with an encryption subkey, created by `gpg`, advertising `AEAD: OCB` |
+| `pass-entry.txt` | The plaintext entry |
+| `pass-entry.ocb.gpg` | The entry encrypted with `gpg --force-ocb`: a public-key packet (tag 1) followed by an AEAD encrypted data packet (tag 20) instead of the classic tag 18 |
+
 ## Try it with gpg
 
 ```sh
