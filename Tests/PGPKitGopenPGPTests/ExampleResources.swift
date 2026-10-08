@@ -16,7 +16,12 @@ enum ExampleResources {
 
     static func bundled(_ name: String) throws -> Data {
         let resourceURL = try #require(Bundle.module.resourceURL)
-        return try Data(contentsOf: resourceURL.appendingPathComponent("Resources/\(name)"))
+        let candidates = [
+            resourceURL.appendingPathComponent("Resources/\(name)"),
+            resourceURL.appendingPathComponent(name)
+        ]
+        let url = try #require(candidates.first { FileManager.default.fileExists(atPath: $0.path) })
+        return try Data(contentsOf: url)
     }
 
     static func bundledText(_ name: String) throws -> String {
