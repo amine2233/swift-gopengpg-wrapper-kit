@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "swift-gopengpg-wrapper-kit",
-    platforms: [.iOS(.v18), .macOS(.v15)],
+    platforms: [.iOS(.v15), .macOS(.v13)],
     products: [
         .library(name: "PGPKit", targets: ["PGPKit"]),
         .library(name: "PGPKitGopenPGP", targets: ["PGPKitGopenPGP"]),
