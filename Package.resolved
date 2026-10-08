@@ -1,0 +1,15 @@
+{
+  "originHash" : "94432f4f2c4116c5c7936eabf5ed0b5459e180f72f2ae33da395f2b4c528b78e",
+  "pins" : [
+    {
+      "identity" : "spm-gopengpg",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/amine2233/spm-gopengpg",
+      "state" : {
+        "revision" : "dc2f8b9ccb4d3403b4de728331d26fedf6cd6954",
+        "version" : "2.10.0"
+      }
+    }
+  ],
+  "version" : 3
+}

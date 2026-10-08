@@ -1,0 +1,4 @@
+Hello from PGPKit.
+
+This file was encrypted with Alice's public key and can only be read with her private key
+and the passphrase "correct horse".

@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+
+# SwiftPM / Xcode
+/.build
+/.index-build
+/Packages
+.swiftpm/
+xcuserdata/
+DerivedData/
+*.xcodeproj
+*.xcworkspace
+.netrc
+
+# Documentation output (mise build_documentations writes to public/)
+/public
+*.doccarchive
+
+# Test and coverage output
+*.xcresult
+*.profraw
+*.profdata
+
+# Local environment loaded by mise.toml (may hold tokens)
+.env
+.env.local
+.env.*.local
+
+# Local tooling
+.claude/
+graphify-out/
